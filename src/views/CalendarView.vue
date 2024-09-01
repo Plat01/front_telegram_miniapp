@@ -4,19 +4,19 @@
             <h2 class="text-2xl font-bold mb-2 text-center">{{ title }}</h2>
             <div class="flex justify-between mb-4 h-48">
                 <div ref="dayPicker" class="flex-1 overflow-y-scroll scroll-snap-y-mandatory">
-                <div v-for="day in days" :key="day" class="h-12 flex items-center justify-center scroll-snap-align-center">
-                    {{ day }}
-                </div>
+                    <div v-for="day in days" :key="day" class="h-12 flex items-center justify-center scroll-snap-align-center">
+                        {{ day }}
+                    </div>
                 </div>
                 <div ref="monthPicker" class="flex-1 overflow-y-scroll scroll-snap-y-mandatory">
-                <div v-for="month in months" :key="month" class="h-12 flex items-center justify-center scroll-snap-align-center">
-                    {{ month }}
-                </div>
+                    <div v-for="month in months" :key="month" class="h-12 flex items-center justify-center scroll-snap-align-center">
+                        {{ month }}
+                    </div>
                 </div>
                 <div ref="yearPicker" class="flex-1 overflow-y-scroll scroll-snap-y-mandatory">
-                <div v-for="year in years" :key="year" class="h-12 flex items-center justify-center scroll-snap-align-center">
-                    {{ year }}
-                </div>
+                    <div v-for="year in years" :key="year" class="h-12 flex items-center justify-center scroll-snap-align-center">
+                        {{ year }}
+                    </div>
                 </div>
             </div>
             <button @click="handleContinue" class="w-full bg-white text-purple-600 py-2 rounded-md font-semibold">
@@ -28,12 +28,19 @@
             <div class="text-4xl font-bold">
                 {{ countdown.days }}:{{ countdown.hours }}:{{ countdown.minutes }}
             </div>
+
+            <ShareWidget 
+                url="https://vue-tg.pages.dev" 
+                comment={{ daysRest }} 
+            />
+
         </div>
     </div>
 </template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
   import { ref, onMounted, computed } from 'vue';
+  import { ShareWidget } from 'vue-tg'
   
   const title = "Введи свою дату рождения";
   const continueButtonText = "Продолжить";
@@ -78,6 +85,22 @@
     setupPicker(monthPicker.value);
     setupPicker(yearPicker.value);
   });
+
+  // const userData = ref();
+  // const tg = window.Telegram.WebApp;
+  // tg.expand();
+
+  // // Get user data
+  // const user = tg.initDataUnsafe.user;
+  // if (user) {
+  //   userData.value = {
+  //     name: user.first_name,
+  //     lastName: user.last_name,
+  //     username: user.username
+  //   };
+  // }
+  // console.log(userData.value);
+  
   
   function setupPicker(element: HTMLElement | null) {
     if (!element) return;
@@ -118,4 +141,8 @@
     selectedDate.value = new Date(selectedYear, selectedMonth, selectedDay);
     showCountdown.value = true;
   }
+
+  let daysRest = "До моего дня рождания осталось ...";
+  // let link = "https://t.me/" + userData.value.username;
+  
   </script>
