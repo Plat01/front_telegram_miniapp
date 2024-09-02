@@ -25,13 +25,14 @@
         </div>
         <div v-else class="text-center">
             <h2 class="text-2xl font-bold mb-4">{{ nextBirthday }}</h2>
+            <p class="text-xl mb-2">{{ name }} {{ lastname }} (@{{ username }})</p>
             <div class="text-4xl font-bold">
                 {{ countdown.days }}:{{ countdown.hours }}:{{ countdown.minutes }}
             </div>
 
             <ShareWidget 
-                url="https://vue-tg.pages.dev" 
-                comment={{ daysRest }} 
+              :url=shareUrl
+              :comment=shareComment
             />
 
         </div>
@@ -45,6 +46,10 @@
   const title = "Введи свою дату рождения";
   const continueButtonText = "Продолжить";
   const nextBirthday = "Ваш следующий рождение начнется через!";
+
+  const name = ref('');
+  const lastname = ref('');
+  const username = ref('');
   
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
@@ -84,23 +89,16 @@
     setupPicker(dayPicker.value);
     setupPicker(monthPicker.value);
     setupPicker(yearPicker.value);
+
+    const tgApp = (window as any).Telegram.WebApp;
+    if (tgApp) {
+      name.value = tgApp.initDataUnsafe.user?.first_name || '';
+      lastname.value = tgApp.initDataUnsafe.user?.last_name || '';
+      username.value = tgApp.initDataUnsafe.user?.username || '';
+    }
+    console.log(name.value, username.value);
   });
 
-  // const userData = ref();
-  // const tg = window.Telegram.WebApp;
-  // tg.expand();
-
-  // // Get user data
-  // const user = tg.initDataUnsafe.user;
-  // if (user) {
-  //   userData.value = {
-  //     name: user.first_name,
-  //     lastName: user.last_name,
-  //     username: user.username
-  //   };
-  // }
-  // console.log(userData.value);
-  
   
   function setupPicker(element: HTMLElement | null) {
     if (!element) return;
@@ -142,7 +140,28 @@
     showCountdown.value = true;
   }
 
-  let daysRest = "До моего дня рождания осталось ...";
-  // let link = "https://t.me/" + userData.value.username;
+  function generateShareableUrl() {
+    const currentUrl = new URL(window.location.href);
+    const params = new URLSearchParams();
+
+    params.append('name', name.value);
+    params.append('lastname', lastname.value);
+    params.append('username', username.value);
+    params.append('days', countdown.value.days.toString());
+    params.append('hours', countdown.value.hours.toString());
+    params.append('minutes', countdown.value.minutes.toString());
+    params.append('showCountdown', true.toString());
+
+    currentUrl.search = params.toString();
+    return currentUrl.toString();
+  }
+
+  const shareUrl = computed(() => {
+    return generateShareableUrl();
+  });
+
+  const shareComment = computed(() => {
+    return `${name.value}  ${lastname.value} (@${username.value}) день рождения через ${countdown.value.days} дней, ${countdown.value.hours} часов и ${countdown.value.minutes} минут!`;
+  });
   
   </script>
