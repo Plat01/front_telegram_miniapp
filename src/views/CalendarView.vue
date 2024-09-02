@@ -160,7 +160,7 @@
   }
 
   function generateShareableUrl() {
-    const currentUrl = new URL(window.location.href);
+    const currentUrl = new URL(window.location.href);  // use tg miniapp link better 
     const params = new URLSearchParams();
 
     params.append('name', name.value);
