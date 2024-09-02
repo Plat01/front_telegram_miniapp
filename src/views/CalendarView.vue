@@ -93,14 +93,11 @@
       name.value = urlParams.get('name') || '';
       lastname.value = urlParams.get('lastname') || '';
       username.value = urlParams.get('username') || '';
-      
-      const days = parseInt(urlParams.get('days') || '0');
-      const hours = parseInt(urlParams.get('hours') || '0');
-      const minutes = parseInt(urlParams.get('minutes') || '0');
-      
-      const now = new Date();
-      const targetDate = new Date(now.getTime() + (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000));
-      selectedDate.value = targetDate;
+
+      const day = parseInt(urlParams.get('day') || '0');
+      const month = parseInt(urlParams.get('month') || '0');
+
+      selectedDate.value = new Date(0, month,day);
     }
   }
   
@@ -169,9 +166,8 @@
     params.append('name', name.value);
     params.append('lastname', lastname.value);
     params.append('username', username.value);
-    params.append('days', countdown.value.days.toString());
-    params.append('hours', countdown.value.hours.toString());
-    params.append('minutes', countdown.value.minutes.toString());
+    params.append('day', selectedDate.value?.getDay()?.toString() || '1');
+    params.append('month', selectedDate.value?.getMonth()?.toString() || '1');
     params.append('showCountdown', true.toString());
 
     currentUrl.search = params.toString();
