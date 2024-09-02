@@ -24,8 +24,8 @@
             </button>
         </div>
         <div v-else class="text-center">
-            <h2 class="text-2xl font-bold mb-4">{{ nextBirthday }}</h2>
-            <p class="text-xl mb-2">{{ name }} {{ lastname }} (@{{ username }})</p>
+            <h2 class="text-2xl font-bold mb-4">{{ name }} {{ lastname }} (@{{ username }})</h2>
+            <p class="text-xl mb-2">{{ nextBirthday }}</p>
             <div class="text-4xl font-bold">
                 {{ countdown.days }}:{{ countdown.hours }}:{{ countdown.minutes }}
             </div>
@@ -45,7 +45,7 @@
   
   const title = "Введи свою дату рождения";
   const continueButtonText = "Продолжить";
-  const nextBirthday = "Ваш следующий рождение начнется через!";
+  const nextBirthday = "Следующий рождение начнется через!";
 
   const name = ref('');
   const lastname = ref('');
@@ -84,8 +84,30 @@
       minutes: minutes.toString().padStart(2, '0')
     };
   });
+
+  function parseUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('showCountdown') === 'true') {
+      showCountdown.value = true;
+      name.value = urlParams.get('name') || '';
+      lastname.value = urlParams.get('lastname') || '';
+      username.value = urlParams.get('username') || '';
+      
+      const days = parseInt(urlParams.get('days') || '0');
+      const hours = parseInt(urlParams.get('hours') || '0');
+      const minutes = parseInt(urlParams.get('minutes') || '0');
+      
+      const now = new Date();
+      const targetDate = new Date(now.getTime() + (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000));
+      selectedDate.value = targetDate;
+    }
+  }
   
   onMounted(() => {
+
+    parseUrlParams();
+
     setupPicker(dayPicker.value);
     setupPicker(monthPicker.value);
     setupPicker(yearPicker.value);
